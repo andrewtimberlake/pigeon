@@ -4,8 +4,8 @@ defmodule Pigeon.APNS.Token do
 
   alias Pigeon.APNS.JWTConfig
 
-  # seconds - 10 seconds short of one hour
-  @token_max_age 3_590
+  # seconds - 50 minutes
+  @token_max_age 3_000
 
   @type t :: {non_neg_integer(), binary() | nil}
 
