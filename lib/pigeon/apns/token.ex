@@ -5,8 +5,8 @@ defmodule Pigeon.APNS.Token do
 
   alias Pigeon.APNS.JWTConfig
 
-  # seconds - 50 minutes
-  @token_max_age 3_000
+  # seconds - 10 seconds short of one hour
+  @token_max_age 3_590
 
   @type t :: {non_neg_integer(), binary() | nil}
 
@@ -33,13 +33,13 @@ defmodule Pigeon.APNS.Token do
       {timestamp, saved_token} = Map.get(map, token_storage_key, {0, nil})
       now = :os.system_time(:seconds)
 
-      token =
-        case now - timestamp do
-          age when age < @token_max_age -> saved_token
-          _ -> generate_apns_jwt(config)
-        end
-
-      {token, Map.put(map, token_storage_key, {now, token})}
+      age = now - timestamp
+      if age < @token_max_age do
+        {saved_token, map}
+      else
+        token = generate_apns_jwt(config)
+        {token, Map.put(map, token_storage_key, {now, token})}
+      end
     end)
   end
 
