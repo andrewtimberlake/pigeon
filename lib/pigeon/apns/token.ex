@@ -1,4 +1,5 @@
 defmodule Pigeon.APNS.Token do
+  require Logger
   @moduledoc false
   import Joken.Config
 
@@ -46,6 +47,8 @@ defmodule Pigeon.APNS.Token do
   defp generate_apns_jwt(config) do
     key = %{"pem" => config.key}
     now = :os.system_time(:seconds)
+
+    Logger.info(fn -> "Generating new APNS Token #{config.key_identifier}:#{config.team_id} - #{now}" end)
 
     signer =
       Joken.Signer.create("ES256", key, %{"kid" => config.key_identifier})
